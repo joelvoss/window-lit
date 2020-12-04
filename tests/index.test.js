@@ -1,29 +1,55 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import { MyComponent } from '../src/index';
+import { useWindow } from '../src/index';
 
-describe('MyComponent', () => {
-	it('renders without errors', async () => {
-		const { getByRole, getByText } = render(<MyComponent />);
+describe('useWindow', () => {
+	it('should render', async () => {
+		function App() {
+			const parentRef = React.useRef();
 
-		// Assert default state
-		expect(getByText(/clicked/i)).toBeInTheDocument();
+			const { totalSize, virtualItems } = useWindow(parentRef, {
+				size: 10000,
+				estimateSize: React.useCallback(() => 35, []),
+				overscan: 5,
+			});
 
-		// Perform some action and await the expected change
-		fireEvent.click(getByRole('button', { name: /\+1/i }));
-		await waitFor(() => getByText(/clicked 1 times/i));
+			return (
+				<div
+					ref={parentRef}
+					style={{ height: '200px', width: '200px', overflow: 'auto' }}
+				>
+					<div
+						style={{
+							position: 'relative',
+							width: '100%',
+							height: `${totalSize}px`,
+						}}
+					>
+						{virtualItems.map(row => (
+							<div
+								key={row.index}
+								style={{
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									width: '100%',
+									height: '35px',
+									transform: `translateY(${row.start}px)`,
+								}}
+							>
+								Row {row.index}
+							</div>
+						))}
+					</div>
+				</div>
+			);
+		}
 
-		// Assert DOM after action
-		expect(getByText(/clicked 1 times/i)).toBeInTheDocument();
+		
+		render(<App />);
 
-		// Performe more actions and await the expected change
-		fireEvent.click(getByRole('button', { name: /\-1/i }));
-		fireEvent.click(getByRole('button', { name: /\-1/i }));
-		await waitFor(() => getByText(/clicked -1 times/i));
-
-		// Assert DOM after actions
-		expect(getByText(/clicked -1 times/i)).toBeInTheDocument();
+		expect(screen.getByText('Row 1')).toBeInTheDocument();
 	});
 });

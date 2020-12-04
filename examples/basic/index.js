@@ -10,7 +10,7 @@ const rows = new Array(10000)
 function Example() {
 	const parentRef = React.useRef();
 
-	const virtualList = useWindow(parentRef, {
+	const { totalSize, virtualItems } = useWindow(parentRef, {
 		size: rows.length,
 		estimateSize: React.useCallback(() => 65, []),
 		overscan: 5,
@@ -19,7 +19,6 @@ function Example() {
 	return (
 		<div
 			ref={parentRef}
-			className="List"
 			style={{
 				width: `100%`,
 				maxHeight: '100vh',
@@ -28,23 +27,23 @@ function Example() {
 		>
 			<div
 				style={{
-					height: `${virtualList.totalSize}px`,
+					height: `${totalSize}px`,
 					width: '100%',
 					position: 'relative',
 				}}
 			>
-				{virtualList.virtualItems.map(virtualRow => (
+				{virtualItems.map(row => (
 					<div
-						key={virtualRow.index}
-						ref={virtualRow.measureRef}
+						key={row.index}
+						ref={row.measureRef}
 						style={{
 							position: 'absolute',
 							width: '100%',
-							height: `${rows[virtualRow.index]}px`,
-							transform: `translateY(${virtualRow.start}px)`,
+							height: `${rows[row.index]}px`,
+							transform: `translateY(${row.start}px)`,
 						}}
 					>
-						Row {virtualRow.index}
+						Row {row.index}
 					</div>
 				))}
 			</div>
