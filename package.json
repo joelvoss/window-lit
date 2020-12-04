@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "author": "Joel Voss <mail@joelvoss.com>",
   "license": "MIT",
+  "homepage": "https://github.com/joelvoss/window-lit",
+  "bugs": {
+    "url": "https://github.com/joelvoss/window-lit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joelvoss/window-lit.git"
+  },
   "source": "src/index.js",
   "main": "dist/window-lit.js",
   "module": "dist/window-lit.es.js",
