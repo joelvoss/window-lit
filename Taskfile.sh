@@ -21,8 +21,9 @@ watch() {
 }
 
 dev() {
+  build
   rm -rf examples/dist
-  parcel examples/**/*.html --no-cache -d examples/dist
+  parcel examples/index.html --no-cache -d examples/dist
 }
 
 format() {
