@@ -13,8 +13,13 @@
   },
   "source": "src/index.js",
   "main": "dist/window-lit.js",
-  "module": "dist/window-lit.es.js",
-  "browser": "dist/window-lit.umd.js",
+  "umd:main": "dist/window-lit.umd.js",
+  "module": "dist/window-lit.m.js",
+  "exports": {
+    "require": "./dist/window-lit.js",
+    "default": "./dist/window-lit.modern.js"
+  },
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "LICENSE"

@@ -13,7 +13,7 @@ fi
 # START tasks
 
 build() {
-  jvdx build --clean -f cjs,es,umd $*
+  jvdx build --clean --no-sourcemaps $*
 }
 
 watch() {
