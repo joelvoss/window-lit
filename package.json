@@ -29,8 +29,8 @@
     "prepublishOnly": "./Taskfile.sh build"
   },
   "devDependencies": {
-    "@jvdx/core": "^2.3.4",
-    "@testing-library/jest-dom": "^5.12.0",
+    "@jvdx/core": "^2.3.6",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "parcel-bundler": "^1.12.5",
     "react": "^17.0.1",
