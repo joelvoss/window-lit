@@ -17,7 +17,7 @@
   "module": "dist/window-lit.m.js",
   "exports": {
     "require": "./dist/window-lit.js",
-    "default": "./dist/window-lit.modern.js"
+    "import": "./dist/window-lit.modern.js"
   },
   "types": "dist/index.d.ts",
   "files": [
