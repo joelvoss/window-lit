@@ -11,12 +11,13 @@
     "type": "git",
     "url": "git+https://github.com/joelvoss/window-lit.git"
   },
+  "type": "module",
   "source": "src/index.js",
-  "main": "dist/window-lit.js",
+  "main": "dist/window-lit.cjs",
   "umd:main": "dist/window-lit.umd.js",
-  "module": "dist/window-lit.m.js",
+  "module": "dist/window-lit.module.js",
   "exports": {
-    "require": "./dist/window-lit.js",
+    "require": "./dist/window-lit.cjs",
     "import": "./dist/window-lit.modern.js"
   },
   "types": "dist/index.d.ts",
