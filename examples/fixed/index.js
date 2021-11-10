@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 
-import { useWindow } from '../../dist/window-lit';
+import { useWindow } from '../../src/index';
 
 function Example() {
 	return (

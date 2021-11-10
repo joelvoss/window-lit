@@ -16,16 +16,6 @@ build() {
   jvdx build --clean --no-sourcemaps $*
 }
 
-watch() {
-  jvdx build -f cjs --watch $*
-}
-
-dev() {
-  build
-  rm -rf examples/dist
-  parcel examples/index.html --no-cache -d examples/dist
-}
-
 format() {
   jvdx format $*
 }
@@ -39,13 +29,23 @@ test() {
 }
 
 validate() {
-  format $*
   lint $*
   test $*
 }
 
 clean() {
-  jvdx clean node_modules dist example/dist $*
+  jvdx clean $*
+}
+
+run_examples() {
+  EXAMPLES_CACHE=.examples
+
+  parcel "examples/**/*.html" \
+    --no-source-maps \
+    --dist-dir ${EXAMPLES_CACHE}/.dist \
+    --cache-dir ${EXAMPLES_CACHE}/.cache
+
+  rm -rf ${EXAMPLES_CACHE}
 }
 
 default() {

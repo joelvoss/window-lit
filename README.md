@@ -93,15 +93,12 @@ $ yarn
 $ ./Taskfile.sh validate
 ```
 
-(3) Start developing by running the `watch` and `dev` tasks in separate
-    terminal windows.  
+(3) Start developing by running the `run_examples` task.
     This spins up a development server hosting the different
     examples located in the [./examples](./examples) folder.
 
 ```bash
-$ ./Taskfile dev
-# in another terminal window
-$ ./Taskfile watch
+$ ./Taskfile run_examples
 ```
 
 ---
