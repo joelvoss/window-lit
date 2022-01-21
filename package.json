@@ -14,7 +14,6 @@
   "type": "module",
   "source": "src/index.js",
   "main": "dist/window-lit.cjs",
-  "umd:main": "dist/window-lit.umd.js",
   "module": "dist/window-lit.module.js",
   "exports": {
     "require": "./dist/window-lit.cjs",
