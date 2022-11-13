@@ -1,9 +1,57 @@
-import * as React from 'react';
-
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useRect, useLayoutEffect, calculateRange } from './utils';
 
+/**
+ * defaultEstimateSize
+ * @type {() => number}
+ */
 const defaultEstimateSize = () => 50;
 
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @typedef {(offset: number) => void} DefaultScrollToFn
+ */
+
+/**
+ * @typedef {Object} ScrollToOptions
+ * @prop {'auto' | 'start' | 'end'} align
+ */
+
+/**
+ * @typedef {Object} ItemSize
+ * @prop {number} index
+ * @prop {number} start
+ * @prop {number} size
+ * @prop {number} end
+ */
+
+/**
+ * @typedef {Object} VirtualItem
+ * @prop {number} index
+ * @prop {number} start
+ * @prop {number} size
+ * @prop {number} end
+ * @prop {(el: any) => void} measureRef
+ */
+
+/**
+ * @typedef {Object} Options
+ * @prop {number} [size]
+ * @prop {() => number} [estimateSize]
+ * @prop {number} paddingStart
+ * @prop {number} paddingEnd
+ * @prop {number} overscan
+ * @prop {boolean} horizontal
+ * @prop {(ref: any) => ({height: number, width: number})} useMeasure
+ * @prop {(offset: number, defaultScrollToFn: DefaultScrollToFn) => void} scrollToFn
+ */
+
+/**
+ * useWindow
+ * @param {any} parentRef
+ * @param {Options} options
+ */
 export function useWindow(
 	parentRef,
 	{
@@ -14,7 +62,7 @@ export function useWindow(
 		overscan = 0,
 		horizontal = false,
 		useMeasure,
-		scrollToFn,
+		scrollToFn: userScrollToFn,
 	},
 ) {
 	const sizeKey = horizontal ? 'width' : 'height';
@@ -25,7 +73,8 @@ export function useWindow(
 		[sizeKey]: 0,
 	};
 
-	const defaultScrollToFn = React.useCallback(
+	/** @type {DefaultScrollToFn} */
+	const defaultScrollToFn = useCallback(
 		offset => {
 			if (parentRef.current) {
 				parentRef.current[scrollKey] = offset;
@@ -34,8 +83,10 @@ export function useWindow(
 		[parentRef, scrollKey],
 	);
 
-	const resolvedScrollToFn = scrollToFn || defaultScrollToFn;
-	scrollToFn = React.useCallback(
+	const resolvedScrollToFn = userScrollToFn || defaultScrollToFn;
+
+	/** @type {DefaultScrollToFn} */
+	const scrollToFn = useCallback(
 		offset => {
 			// NOTE(joel): We pass both offset and the default scrollTo function
 			// so a user can implement smooth scrolling based on the current offset
@@ -47,19 +98,20 @@ export function useWindow(
 
 	// Determine the initial item sizes to calculate the total size of the
 	// virtualized list.
-	const [itemSizeCache, setItemSizeCache] = React.useState({});
+	const [itemSizeCache, setItemSizeCache] = useState({});
 
 	// NOTE(joel): Reset the itemSizeCache whenever the `size` or `estimateSize`
 	// parameter change
-	const mountedRef = React.useRef();
+	const mountedRef = useRef();
 	useLayoutEffect(() => {
-		if (mountedRef.current) {
-			if (estimateSize || size) setItemSizeCache({});
+		if (mountedRef.current && (estimateSize || size)) {
+			setItemSizeCache({});
 		}
 		mountedRef.current = true;
 	}, [estimateSize, size]);
 
-	const itemSizes = React.useMemo(() => {
+	/** @type {ItemSize[]} */
+	const itemSizes = useMemo(() => {
 		const _itemSizes = [];
 		for (let i = 0; i < size; i++) {
 			const itemSize = itemSizeCache[i];
@@ -73,7 +125,7 @@ export function useWindow(
 
 	const totalSize = (itemSizes[size - 1]?.end || 0) + paddingEnd;
 
-	const internalState = React.useRef({});
+	const internalState = useRef({});
 	internalState.current = {
 		...internalState.current,
 		overscan,
@@ -82,7 +134,7 @@ export function useWindow(
 		totalSize,
 	};
 
-	const [range, setRange] = React.useState({ start: 0, end: 0 });
+	const [range, setRange] = useState({ start: 0, end: 0 });
 
 	useLayoutEffect(() => {
 		const element = parentRef.current;
@@ -108,8 +160,11 @@ export function useWindow(
 		};
 	}, [scrollKey, size, outerSize, parentRef]);
 
-	// Determine visible items
-	const virtualItems = React.useMemo(() => {
+	/**
+	 * Determine visible items
+	 * @type {VirtualItem[]}
+	 */
+	const virtualItems = useMemo(() => {
 		const _virtualItems = [];
 		const end = Math.min(range.end, itemSizes.length - 1);
 
@@ -147,9 +202,13 @@ export function useWindow(
 		return _virtualItems;
 	}, [range.start, range.end, itemSizes, sizeKey, defaultScrollToFn]);
 
-	// scrollToOffset scrolls the list to a given offset (in px). In addition
-	// an align option can be specified
-	const scrollToOffset = React.useCallback(
+	const scrollToOffset = useCallback(
+		/**
+		 * scrollToOffset scrolls the list to a given offset (in px). In addition
+		 * an align option can be specified
+		 * @param {number} toOffset
+		 * @param {ScrollToOptions} options
+		 */
 		(toOffset, { align = 'start' } = {}) => {
 			const { scrollOffset, outerSize } = internalState.current;
 
@@ -174,10 +233,14 @@ export function useWindow(
 		[scrollToFn],
 	);
 
-	// _scrollToIndex implements the actual logic to scroll the list to a given
-	// index.
-	const _scrollToIndex = React.useCallback(
-		(index, { align = 'auto', ...rest } = {}) => {
+	const _scrollToIndex = useCallback(
+		/**
+		 * _scrollToIndex implements the actual logic to scroll the list to a given
+		 * index.
+		 * @param {number} index
+		 * @param {ScrollToOptions} options
+		 */
+		(index, { align = 'auto' } = {}) => {
 			const { itemSizes, scrollOffset, outerSize } = internalState.current;
 
 			const itemSize = itemSizes[Math.max(0, Math.min(index, size - 1))];
@@ -203,22 +266,26 @@ export function useWindow(
 					? itemSize.end
 					: itemSize.start;
 
-			scrollToOffset(toOffset, { align, ...rest });
+			scrollToOffset(toOffset, { align });
 		},
 		[scrollToOffset, size],
 	);
 
-	// scrollToIndex is a thin wrapper around _scrollToIndex which fixes an issue
-	// with dynamic sizes.
-	const scrollToIndex = React.useCallback(
-		(...args) => {
+	const scrollToIndex = useCallback(
+		/**
+		 * scrollToIndex is a thin wrapper around _scrollToIndex which fixes an issue
+		 * with dynamic sizes.
+		 * @param {number} index
+		 * @param {ScrollToOptions} options
+		 */
+		(index, options) => {
 			// NOTE(joel): We call tryScollToIndex two times here because of dynamic
 			// sizes which can cause offset shifts after render. The first time we
 			// scroll to the given index, allow a single animation frame and scroll
 			// again.
-			_scrollToIndex(...args);
+			_scrollToIndex(index, options);
 			requestAnimationFrame(() => {
-				_scrollToIndex(...args);
+				_scrollToIndex(index, options);
 			});
 		},
 		[_scrollToIndex],
