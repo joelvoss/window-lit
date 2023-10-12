@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/joelvoss/window-lit.git"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "source": "src/index.js",
   "main": "dist/window-lit.cjs",
@@ -30,11 +33,11 @@
     "prepublishOnly": "./Taskfile.sh build"
   },
   "devDependencies": {
-    "@jvdx/core": "^3.5.0",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@jvdx/core": "^3.6.0",
+    "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
-    "jest-environment-jsdom": "^29.6.1",
-    "parcel": "^2.9.3",
+    "jest-environment-jsdom": "^29.7.0",
+    "parcel": "^2.10.0",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
