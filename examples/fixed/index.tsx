@@ -17,7 +17,7 @@ function Example() {
 }
 
 function FixedList() {
-	const parentRef = React.useRef();
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		size: 10000,
@@ -65,7 +65,7 @@ function FixedList() {
 }
 
 function FixedColumn() {
-	const parentRef = React.useRef();
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		horizontal: true,
@@ -114,7 +114,7 @@ function FixedColumn() {
 }
 
 function FixedGrid() {
-	const parentRef = React.useRef();
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const virtualizedRow = useWindow(parentRef, {
 		size: 10000,
@@ -179,6 +179,6 @@ function FixedGrid() {
 	);
 }
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(<Example />);

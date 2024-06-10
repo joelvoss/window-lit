@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { useWindow } from '../../src/index';
 
-function easeInOutQuint(t) {
+function easeInOutQuint(t: number) {
 	return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
 }
 
@@ -17,31 +17,34 @@ function Example() {
 }
 
 function FixedList() {
-	const parentRef = React.useRef();
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	// Custom smooth scrolling function.
-	const scrollingRef = React.useRef();
-	const scrollToFn = React.useCallback((offset, defaultScrollTo) => {
-		const duration = 1000;
-		const start = parentRef.current.scrollTop;
-		const startTime = (scrollingRef.current = Date.now());
+	const scrollingRef = React.useRef<number>();
+	const scrollToFn = React.useCallback(
+		(offset: number, defaultScrollTo: (offset: number) => void) => {
+			const duration = 1000;
+			const start = parentRef.current?.scrollTop || 0;
+			const startTime = (scrollingRef.current = Date.now());
 
-		const run = () => {
-			if (scrollingRef.current !== startTime) return;
-			const now = Date.now();
-			const elapsed = now - startTime;
-			const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
-			const interpolated = start + (offset - start) * progress;
+			const run = () => {
+				if (scrollingRef.current !== startTime) return;
+				const now = Date.now();
+				const elapsed = now - startTime;
+				const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
+				const interpolated = start + (offset - start) * progress;
 
-			if (elapsed < duration) {
-				defaultScrollTo(interpolated);
-				requestAnimationFrame(run);
-			} else {
-				defaultScrollTo(interpolated);
-			}
-		};
-		requestAnimationFrame(run);
-	}, []);
+				if (elapsed < duration) {
+					defaultScrollTo(interpolated);
+					requestAnimationFrame(run);
+				} else {
+					defaultScrollTo(interpolated);
+				}
+			};
+			requestAnimationFrame(run);
+		},
+		[],
+	);
 
 	const { totalSize, virtualItems, scrollToIndex, scrollToOffset } = useWindow(
 		parentRef,
@@ -109,6 +112,6 @@ function FixedList() {
 	);
 }
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(<Example />);

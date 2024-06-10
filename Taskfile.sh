@@ -3,56 +3,76 @@
 set -e
 PATH=./node_modules/.bin:$PATH
 
-# Export environment variables from `.env`
-if [ -f .env ]
-then
-  export $(cat .env | sed 's/#.*//g' | xargs)
-fi
-
 # //////////////////////////////////////////////////////////////////////////////
 # START tasks
 
+start_dev() {
+  vite
+}
+
 build() {
-  jvdx build --clean -f modern,cjs,esm --no-sourcemap
+  echo "Building..."
+  rm -rf dist
+  vite build
 }
 
 format() {
-  jvdx format $*
+  echo "Running prettier..."
+
+  prettier \
+    --write \
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md,mdx,yml,yaml,html}" \
+    "tests/**/*.{js,jsx,ts,tsx,json,css,scss,md,mdx,yml,yaml,html}"
+}
+
+typecheck() {
+  echo "Running tsc..."
+  tsc --noEmit
 }
 
 lint() {
-  jvdx lint $*
+  echo "Running eslint..."
+  eslint src
 }
 
 test() {
-  jvdx test --testPathPattern=/tests --passWithNoTests --env=jsdom $*
+  if [ "$1" = "-w" ] || [ "$1" = "--watch" ]; then
+    echo "Running vitest in watch mode..."
+    vitest
+    return
+  else
+    echo "Running vitest..."
+    vitest run
+  fi
 }
 
 validate() {
-  lint $*
-  test $*
+  typecheck
+  lint
+  test
 }
 
 clean() {
-  jvdx clean $*
+  rm -rf node_modules dist
 }
 
-run_examples() {
-  EXAMPLES_CACHE=.examples
-
-  parcel "examples/**/*.html" \
-    --no-source-maps \
-    --dist-dir ${EXAMPLES_CACHE}/.dist \
-    --cache-dir ${EXAMPLES_CACHE}/.cache
-
-  rm -rf ${EXAMPLES_CACHE}
-}
-
-default() {
-  build
+help() {
+  echo "Usage: $0 <command>"
+  echo
+  echo "Commands:"
+  echo "  start_dev   Start development server"
+  echo "  build       Build for production"
+  echo "  format      Format code"
+  echo "  typecheck   Typecheck code"
+  echo "  lint        Lint code"
+  echo "  test        Run tests"
+  echo "  validate    Validate code"
+  echo "  clean       Clean temporary files/directories"
+  echo "  help        Show help"
+  echo
 }
 
 # END tasks
 # //////////////////////////////////////////////////////////////////////////////
 
-${@:-default}
+${@:-help}

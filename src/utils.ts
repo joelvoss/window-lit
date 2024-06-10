@@ -1,11 +1,32 @@
-import * as React from 'react';
+import {
+	type RefObject,
+	useState,
+	useRef,
+	useLayoutEffect as _useLayoutEffect,
+	useEffect,
+} from 'react';
+import type { InternalState, NodeState, ObserverCallback } from './types';
 
-let props = ['bottom', 'height', 'left', 'right', 'top', 'width'];
+////////////////////////////////////////////////////////////////////////////////
 
-let rectChanged = (a = {}, b = {}) => props.some(prop => a[prop] !== b[prop]);
+let props: (keyof DOMRect)[] = [
+	'bottom',
+	'height',
+	'left',
+	'right',
+	'top',
+	'width',
+];
 
-let observedNodes = new Map();
-let rafId;
+/**
+ * rectChanged checks if two DOMRects are different
+ */
+function rectChanged(a = {} as DOMRect, b = {} as DOMRect) {
+	return props.some(prop => a[prop] !== b[prop]);
+}
+
+let observedNodes = new Map<Element, NodeState>();
+let rafId: number;
 
 let measureObservedNodes = () => {
 	observedNodes.forEach(state => {
@@ -28,43 +49,57 @@ let measureObservedNodes = () => {
 	rafId = window.requestAnimationFrame(measureObservedNodes);
 };
 
-const observeRect = (node, cb) => ({
-	observe() {
-		let wasEmpty = observedNodes.size === 0;
-		if (observedNodes.has(node)) {
-			observedNodes.get(node).callbacks.push(cb);
-		} else {
-			observedNodes.set(node, {
-				rect: undefined,
-				hasRectChanged: false,
-				callbacks: [cb],
-			});
-		}
-		if (wasEmpty) measureObservedNodes();
-	},
+////////////////////////////////////////////////////////////////////////////////
 
-	unobserve() {
-		let state = observedNodes.get(node);
-		if (state) {
-			// Remove the callback
-			const index = state.callbacks.indexOf(cb);
-			if (index >= 0) state.callbacks.splice(index, 1);
+/**
+ * observeRect observes an Element's rect and calls a callback when it changes
+ */
+function observeRect<E extends Element>(node: E, cb: ObserverCallback) {
+	return {
+		observe() {
+			let wasEmpty = observedNodes.size === 0;
+			if (observedNodes.has(node)) {
+				observedNodes.get(node)!.callbacks.push(cb);
+			} else {
+				observedNodes.set(node, {
+					rect: undefined,
+					hasRectChanged: false,
+					callbacks: [cb],
+				});
+			}
+			if (wasEmpty) measureObservedNodes();
+		},
 
-			// Remove the node reference
-			if (!state.callbacks.length) observedNodes.delete(node);
+		unobserve() {
+			let state = observedNodes.get(node);
+			if (state) {
+				// Remove the callback
+				const index = state.callbacks.indexOf(cb);
+				if (index >= 0) state.callbacks.splice(index, 1);
 
-			// Stop the loop
-			if (!observedNodes.size) cancelAnimationFrame(rafId);
-		}
-	},
-});
+				// Remove the node reference
+				if (!state.callbacks.length) observedNodes.delete(node);
+
+				// Stop the loop
+				if (!observedNodes.size) cancelAnimationFrame(rafId);
+			}
+		},
+	};
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export function useRect(nodeRef, observe = true, onChange) {
-	let initialRectSet = React.useRef(false);
-	let [rect, setRect] = React.useState(null);
-	let observerRef = React.useRef(null);
+/**
+ * useRect observes an Element's rect and returns it
+ */
+export function useRect<E extends Element>(
+	nodeRef: RefObject<E>,
+	observe = true,
+	onChange?: ObserverCallback,
+) {
+	let initialRectSet = useRef(false);
+	let [rect, setRect] = useState<DOMRect>();
+	let observerRef = useRef<ReturnType<typeof observeRect>>();
 	useLayoutEffect(() => {
 		const cleanup = () => {
 			observerRef.current && observerRef.current.unobserve();
@@ -76,7 +111,7 @@ export function useRect(nodeRef, observe = true, onChange) {
 
 		if (!observerRef.current) {
 			observerRef.current = observeRect(nodeRef.current, rect => {
-				onChange && onChange(rect);
+				typeof onChange == 'function' && onChange(rect);
 				setRect(rect);
 			});
 		}
@@ -103,26 +138,20 @@ export function useRect(nodeRef, observe = true, onChange) {
 export const useLayoutEffect =
 	typeof window !== 'undefined' &&
 	window.document &&
-	window.document.createElement
-		? React.useLayoutEffect
-		: React.useEffect;
+	window.document.createElement != null
+		? _useLayoutEffect
+		: useEffect;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
  * calculateRange calculates the range to render
- * @param {{
- *   overscan: number,
- *   itemSizes: { index: number, start: number, size: number, end: number }[],
- *   outerSize: number,
- *   scrollOffset: number
- * }} options
- * @param {{ start: number, end: number }} prevRange
  */
 export function calculateRange(
-	{ overscan, itemSizes, outerSize, scrollOffset },
-	prevRange,
+	input: InternalState,
+	prevRange?: { start: number; end: number },
 ) {
+	const { overscan, itemSizes, outerSize, scrollOffset } = input;
 	if (itemSizes == null) throw new Error(`itemSizes missing`);
 
 	const total = itemSizes.length;

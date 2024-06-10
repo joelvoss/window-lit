@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect } from 'vitest';
+import { useRef, useCallback } from 'react';
+import { render, screen } from './test-utils';
 
 import { useWindow } from '../src/index';
 
 describe('useWindow', () => {
 	it('should render', async () => {
 		function App() {
-			const parentRef = React.useRef();
+			const parentRef = useRef<HTMLDivElement>(null);
 
 			const { totalSize, virtualItems } = useWindow(parentRef, {
 				size: 10000,
-				estimateSize: React.useCallback(() => 35, []),
+				estimateSize: useCallback(() => 35, []),
 				overscan: 5,
 			});
 
@@ -48,13 +48,14 @@ describe('useWindow', () => {
 		}
 
 		render(<App />);
-
-		expect(screen.getByText('Row 1')).toBeInTheDocument();
+		expect(screen.queryByText('Row 1')).toBeInTheDocument();
+		expect(screen.queryByText('Row 5')).toBeInTheDocument();
+		expect(screen.queryByText('Row 10')).not.toBeInTheDocument();
 	});
 
 	it('should render given dynamic size', async () => {
 		function App() {
-			const parentRef = React.useRef();
+			const parentRef = useRef<HTMLDivElement>(null);
 
 			const { totalSize, virtualItems } = useWindow(parentRef, {
 				size: 10000,
@@ -94,8 +95,9 @@ describe('useWindow', () => {
 			);
 		}
 
-		const rendered = render(<App />);
-
-		rendered.getByText('Row 1');
+		render(<App />);
+		expect(screen.queryByText('Row 1')).toBeInTheDocument();
+		expect(screen.queryByText('Row 5')).toBeInTheDocument();
+		expect(screen.queryByText('Row 10')).not.toBeInTheDocument();
 	});
 });

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { Fragment, StrictMode, useCallback, useMemo, useRef } from "react";
 import { createRoot } from 'react-dom/client';
 
 import { useWindow } from '../../src/index';
 
 function Example() {
-	const rows = React.useMemo(
+	const rows = useMemo(
 		() =>
 			new Array(10000)
 				.fill(true)
@@ -12,7 +12,7 @@ function Example() {
 		[],
 	);
 
-	const columns = React.useMemo(
+	const columns = useMemo(
 		() =>
 			new Array(10000)
 				.fill(true)
@@ -32,8 +32,9 @@ function Example() {
 	);
 }
 
-function DynamicList({ rows }) {
-	const parentRef = React.useRef();
+function DynamicList(props: { rows: number[]}) {
+	const { rows } = props;
+	const parentRef = useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		size: rows.length,
@@ -79,8 +80,9 @@ function DynamicList({ rows }) {
 	);
 }
 
-function DynamicColumn({ columns }) {
-	const parentRef = React.useRef();
+function DynamicColumn(props: { columns: number[] }) {
+	const { columns } = props;
+	const parentRef = useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		horizontal: true,
@@ -127,19 +129,20 @@ function DynamicColumn({ columns }) {
 	);
 }
 
-function DynamicGrid({ rows, columns }) {
-	const parentRef = React.useRef();
+function DynamicGrid(props: { rows: number[], columns: number[]}) {
+	const { rows, columns } = props;
+	const parentRef = useRef<HTMLDivElement>(null);
 
 	const virtualizedRow = useWindow(parentRef, {
 		size: 10000,
-		estimateSize: React.useCallback(i => rows[i], [rows]),
+		estimateSize: useCallback((i: number) => rows[i], [rows]),
 		overscan: 5,
 	});
 
 	const virtualizedColumn = useWindow(parentRef, {
 		horizontal: true,
 		size: 10000,
-		estimateSize: React.useCallback(i => columns[i], [columns]),
+		estimateSize: useCallback((i: number) => columns[i], [columns]),
 		overscan: 5,
 	});
 
@@ -161,7 +164,7 @@ function DynamicGrid({ rows, columns }) {
 				}}
 			>
 				{virtualizedRow.virtualItems.map(row => (
-					<React.Fragment key={row.index}>
+					<Fragment key={row.index}>
 						{virtualizedColumn.virtualItems.map(column => (
 							<div
 								key={column.index}
@@ -186,13 +189,17 @@ function DynamicGrid({ rows, columns }) {
 								Cell {row.index}, {column.index}
 							</div>
 						))}
-					</React.Fragment>
+					</Fragment>
 				))}
 			</div>
 		</div>
 	);
 }
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
-root.render(<Example />);
+root.render(
+  <StrictMode>
+    <Example />
+  </StrictMode>,
+);

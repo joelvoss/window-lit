@@ -32,12 +32,13 @@ function Example() {
 	);
 }
 
-function VariableList({ rows }) {
-	const parentRef = React.useRef();
+function VariableList(props: { rows: number[] }) {
+	const { rows } = props;
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		size: rows.length,
-		estimateSize: React.useCallback(i => rows[i], [rows]),
+		estimateSize: React.useCallback((i: number) => rows[i], [rows]),
 		overscan: 5,
 	});
 
@@ -80,13 +81,14 @@ function VariableList({ rows }) {
 	);
 }
 
-function VariableColumn({ columns }) {
-	const parentRef = React.useRef();
+function VariableColumn(props: { columns: number[] }) {
+	const { columns } = props;
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const { totalSize, virtualItems } = useWindow(parentRef, {
 		horizontal: true,
 		size: columns.length,
-		estimateSize: React.useCallback(i => columns[i], [columns]),
+		estimateSize: React.useCallback((i: number) => columns[i], [columns]),
 		overscan: 5,
 	});
 
@@ -129,19 +131,20 @@ function VariableColumn({ columns }) {
 	);
 }
 
-function VariableGrid({ rows, columns }) {
-	const parentRef = React.useRef();
+function VariableGrid(props: { rows: number[]; columns: number[] }) {
+	const { rows, columns } = props;
+	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	const virtualizedRow = useWindow(parentRef, {
 		size: 10000,
-		estimateSize: React.useCallback(i => rows[i], [rows]),
+		estimateSize: React.useCallback((i: number) => rows[i], [rows]),
 		overscan: 5,
 	});
 
 	const virtualizedColumn = useWindow(parentRef, {
 		horizontal: true,
 		size: 10000,
-		estimateSize: React.useCallback(i => columns[i], [columns]),
+		estimateSize: React.useCallback((i: number) => columns[i], [columns]),
 		overscan: 5,
 	});
 
@@ -173,8 +176,8 @@ function VariableGrid({ rows, columns }) {
 											? 'odd'
 											: 'even'
 										: row.index % 2
-										? 'odd'
-										: 'even'
+											? 'odd'
+											: 'even'
 								}
 								style={{
 									position: 'absolute',
@@ -195,6 +198,6 @@ function VariableGrid({ rows, columns }) {
 	);
 }
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(<Example />);
