@@ -44,7 +44,7 @@ function VariableList(props: { rows: number[] }) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `200px`,
@@ -94,7 +94,7 @@ function VariableColumn(props: { columns: number[] }) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `100px`,
@@ -150,7 +150,7 @@ function VariableGrid(props: { rows: number[]; columns: number[] }) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `500px`,

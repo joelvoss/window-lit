@@ -20,12 +20,13 @@ function FixedList() {
 	const parentRef = React.useRef<HTMLDivElement>(null);
 
 	// Custom smooth scrolling function.
-	const scrollingRef = React.useRef<number>();
+	const scrollingRef = React.useRef<number>(null);
 	const scrollToFn = React.useCallback(
 		(offset: number, defaultScrollTo: (offset: number) => void) => {
 			const duration = 1000;
 			const start = parentRef.current?.scrollTop || 0;
-			const startTime = (scrollingRef.current = Date.now());
+			scrollingRef.current = Date.now();
+			const startTime = scrollingRef.current;
 
 			const run = () => {
 				if (scrollingRef.current !== startTime) return;
@@ -60,13 +61,15 @@ function FixedList() {
 		<>
 			<div>
 				<button
-					className="btn"
+					type='button'
+					className='btn'
 					onClick={() => scrollToIndex(Math.floor(Math.random() * 10000))}
 				>
 					Scroll To Random Index
 				</button>
 				<button
-					className="btn"
+					type='button'
+					className='btn'
 					onClick={() => scrollToOffset(Math.floor(Math.random() * 350000))}
 				>
 					Scroll To Random Offset
@@ -74,7 +77,7 @@ function FixedList() {
 			</div>
 
 			<div
-				className="box"
+				className='box'
 				ref={parentRef}
 				style={{
 					height: `200px`,

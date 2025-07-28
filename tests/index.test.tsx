@@ -1,8 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { useRef, useCallback } from 'react';
-import { render, screen } from './test-utils';
-
+import { useCallback, useRef } from 'react';
+import { describe, expect, it } from 'vitest';
 import { useWindow } from '../src/index';
+import { render, screen } from './test-utils';
 
 describe('useWindow', () => {
 	it('should render', async () => {

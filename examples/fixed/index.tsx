@@ -27,7 +27,7 @@ function FixedList() {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `200px`,
@@ -76,7 +76,7 @@ function FixedColumn() {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `100px`,
@@ -131,7 +131,7 @@ function FixedGrid() {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `500px`,
@@ -157,8 +157,8 @@ function FixedGrid() {
 											? 'odd'
 											: 'even'
 										: row.index % 2
-										? 'odd'
-										: 'even'
+											? 'odd'
+											: 'even'
 								}
 								style={{
 									position: 'absolute',

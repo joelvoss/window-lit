@@ -1,9 +1,9 @@
 import {
-	type RefObject,
-	useState,
-	useRef,
 	useLayoutEffect as _useLayoutEffect,
+	type RefObject,
 	useEffect,
+	useRef,
+	useState,
 } from 'react';
 import type { InternalState, NodeState, ObserverCallback } from './types';
 
@@ -59,7 +59,10 @@ function observeRect<E extends Element>(node: E, cb: ObserverCallback) {
 		observe() {
 			let wasEmpty = observedNodes.size === 0;
 			if (observedNodes.has(node)) {
-				observedNodes.get(node)!.callbacks.push(cb);
+				const obj = observedNodes.get(node);
+				if (obj) {
+					obj.callbacks.push(cb);
+				}
 			} else {
 				observedNodes.set(node, {
 					rect: undefined,
@@ -93,16 +96,16 @@ function observeRect<E extends Element>(node: E, cb: ObserverCallback) {
  * useRect observes an Element's rect and returns it
  */
 export function useRect<E extends Element>(
-	nodeRef: RefObject<E>,
+	nodeRef: RefObject<E | null>,
 	observe = true,
 	onChange?: ObserverCallback,
 ) {
 	let initialRectSet = useRef(false);
 	let [rect, setRect] = useState<DOMRect>();
-	let observerRef = useRef<ReturnType<typeof observeRect>>();
+	let observerRef = useRef<ReturnType<typeof observeRect>>(null);
 	useLayoutEffect(() => {
 		const cleanup = () => {
-			observerRef.current && observerRef.current.unobserve();
+			observerRef.current?.unobserve();
 		};
 
 		if (!nodeRef.current) {
@@ -111,7 +114,7 @@ export function useRect<E extends Element>(
 
 		if (!observerRef.current) {
 			observerRef.current = observeRect(nodeRef.current, rect => {
-				typeof onChange == 'function' && onChange(rect);
+				typeof onChange === 'function' && onChange(rect);
 				setRect(rect);
 			});
 		}

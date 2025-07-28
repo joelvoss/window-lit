@@ -1,4 +1,4 @@
-import { Fragment, StrictMode, useCallback, useMemo, useRef } from "react";
+import { Fragment, StrictMode, useCallback, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { useWindow } from '../../src/index';
@@ -32,7 +32,7 @@ function Example() {
 	);
 }
 
-function DynamicList(props: { rows: number[]}) {
+function DynamicList(props: { rows: number[] }) {
 	const { rows } = props;
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +43,7 @@ function DynamicList(props: { rows: number[]}) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `200px`,
@@ -92,7 +92,7 @@ function DynamicColumn(props: { columns: number[] }) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `100px`,
@@ -129,7 +129,7 @@ function DynamicColumn(props: { columns: number[] }) {
 	);
 }
 
-function DynamicGrid(props: { rows: number[], columns: number[]}) {
+function DynamicGrid(props: { rows: number[]; columns: number[] }) {
 	const { rows, columns } = props;
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -148,7 +148,7 @@ function DynamicGrid(props: { rows: number[], columns: number[]}) {
 
 	return (
 		<div
-			className="box"
+			className='box'
 			ref={parentRef}
 			style={{
 				height: `500px`,
@@ -174,8 +174,8 @@ function DynamicGrid(props: { rows: number[], columns: number[]}) {
 											? 'odd'
 											: 'even'
 										: row.index % 2
-										? 'odd'
-										: 'even'
+											? 'odd'
+											: 'even'
 								}
 								style={{
 									position: 'absolute',
@@ -199,7 +199,7 @@ function DynamicGrid(props: { rows: number[], columns: number[]}) {
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 root.render(
-  <StrictMode>
-    <Example />
-  </StrictMode>,
+	<StrictMode>
+		<Example />
+	</StrictMode>,
 );

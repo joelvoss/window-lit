@@ -1,13 +1,13 @@
 import {
-	type RefObject,
 	type RefCallback,
+	type RefObject,
 	useCallback,
 	useMemo,
 	useRef,
 	useState,
 } from 'react';
-import { useRect, useLayoutEffect, calculateRange } from './utils';
 import type { InternalState, ItemSize, ScrollToOptions } from './types';
+import { calculateRange, useLayoutEffect, useRect } from './utils';
 
 interface VirtualItem<E extends Element> extends ItemSize {
 	measureRef: RefCallback<E>;
@@ -38,7 +38,7 @@ interface Options {
  * useWindow
  */
 export function useWindow<E extends Element>(
-	parentRef: RefObject<E>,
+	parentRef: RefObject<E | null>,
 	options?: Options,
 ) {
 	const {
@@ -89,7 +89,7 @@ export function useWindow<E extends Element>(
 
 	// NOTE(joel): Reset the itemSizeCache whenever the `size` or `estimateSize`
 	// parameter change
-	const mountedRef = useRef<boolean>();
+	const mountedRef = useRef<boolean>(null);
 	useLayoutEffect(() => {
 		if (mountedRef.current && (estimateSize != null || size)) {
 			setItemSizeCache({});
