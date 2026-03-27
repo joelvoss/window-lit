@@ -1,55 +1,54 @@
 {
-  "name": "window-lit",
-  "description": "A simple react component/hook library",
-  "version": "4.0.0",
-  "author": "Joel Voss <mail@joelvoss.com>",
-  "license": "MIT",
-  "homepage": "https://github.com/joelvoss/window-lit",
-  "bugs": {
-    "url": "https://github.com/joelvoss/window-lit/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joelvoss/window-lit.git"
-  },
-  "type": "module",
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
-  "source": "./src/index.tsx",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
-  },
-  "scripts": {
-    "test": "./Taskfile.sh test",
-    "prepublishOnly": "./Taskfile.sh build"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.1.2",
-    "@types/node": "24.1.0",
-    "jsdom": "26.1.0",
-    "typescript": "5.8.3",
-    "vite": "7.0.6",
-    "vite-plugin-dts": "4.5.4",
-    "vitest": "3.2.4",
-    "@testing-library/jest-dom": "^6.6.4",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.7.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
-  },
-  "peerDependencies": {
-    "react": ">=17",
-    "react-dom": ">=17"
-  }
+	"name": "window-lit",
+	"description": "A simple react component/hook library",
+	"version": "4.0.0",
+	"author": "Joel Voss <mail@joelvoss.com>",
+	"license": "MIT",
+	"homepage": "https://github.com/joelvoss/window-lit",
+	"bugs": {
+		"url": "https://github.com/joelvoss/window-lit/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/joelvoss/window-lit.git"
+	},
+	"type": "module",
+	"files": [
+		"dist",
+		"LICENSE",
+		"README.md"
+	],
+	"source": "./src/index.tsx",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"import": "./dist/index.js",
+		"require": "./dist/index.cjs"
+	},
+	"scripts": {
+		"test": "./Taskfile.sh test",
+		"prepublishOnly": "./Taskfile.sh build"
+	},
+	"devDependencies": {
+		"@types/node": "25.5.0",
+		"@types/react": "19.2.14",
+		"@types/react-dom": "19.2.3",
+		"@vitejs/plugin-react": "6.0.1",
+		"@vitest/browser-playwright": "4.1.2",
+		"oxfmt": "0.42.0",
+		"oxlint": "1.57.0",
+		"react": "19.2.4",
+		"react-dom": "19.2.4",
+		"typescript": "6.0.2",
+		"vite": "8.0.3",
+		"vite-plugin-bundle-dts": "0.2.0",
+		"vitest": "4.1.2",
+		"vitest-browser-react": "2.1.0"
+	},
+	"peerDependencies": {
+		"react": ">=17",
+		"react-dom": ">=17"
+	}
 }

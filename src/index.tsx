@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+
 import type { InternalState, ItemSize, ScrollToOptions } from './types';
 import { calculateRange, useLayoutEffect, useRect } from './utils';
 
@@ -143,7 +144,7 @@ export function useWindow<E extends Element>(
 		const onScroll = () => {
 			const scrollOffset = element[scrollKey];
 			internalState.current.scrollOffset = scrollOffset;
-			setRange(prevRange => calculateRange(internalState.current, prevRange));
+			setRange((prevRange) => calculateRange(internalState.current, prevRange));
 		};
 
 		// NOTE(joel): Manually call the onScoll function to determine the
@@ -172,7 +173,7 @@ export function useWindow<E extends Element>(
 
 			const item: VirtualItem<E> = {
 				...itemSize,
-				measureRef: el => {
+				measureRef: (el) => {
 					const { scrollOffset } = internalState.current;
 
 					if (el) {
@@ -186,7 +187,7 @@ export function useWindow<E extends Element>(
 								defaultScrollToFn(scrollOffset + (measuredSize - item.size));
 							}
 
-							setItemSizeCache(old => ({
+							setItemSizeCache((old) => ({
 								...old,
 								[i]: measuredSize,
 							}));

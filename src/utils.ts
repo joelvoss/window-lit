@@ -5,6 +5,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+
 import type { InternalState, NodeState, ObserverCallback } from './types';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,16 +23,16 @@ let props: (keyof DOMRect)[] = [
  * rectChanged checks if two DOMRects are different
  */
 function rectChanged(a = {} as DOMRect, b = {} as DOMRect) {
-	return props.some(prop => a[prop] !== b[prop]);
+	return props.some((prop) => a[prop] !== b[prop]);
 }
 
 let observedNodes = new Map<Element, NodeState>();
 let rafId: number;
 
 let measureObservedNodes = () => {
-	observedNodes.forEach(state => {
+	observedNodes.forEach((state) => {
 		if (state.hasRectChanged) {
-			state.callbacks.forEach(cb => cb(state.rect));
+			state.callbacks.forEach((cb) => cb(state.rect));
 			state.hasRectChanged = false;
 		}
 	});
@@ -113,8 +114,8 @@ export function useRect<E extends Element>(
 		}
 
 		if (!observerRef.current) {
-			observerRef.current = observeRect(nodeRef.current, rect => {
-				typeof onChange === 'function' && onChange(rect);
+			observerRef.current = observeRect(nodeRef.current, (rect) => {
+				if (typeof onChange === 'function') onChange(rect);
 				setRect(rect);
 			});
 		}
@@ -124,7 +125,7 @@ export function useRect<E extends Element>(
 			setRect(nodeRef.current.getBoundingClientRect());
 		}
 
-		observe && observerRef.current.observe();
+		if (observe) observerRef.current.observe();
 		return cleanup;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [nodeRef.current, observe, onChange]);
